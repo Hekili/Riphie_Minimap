@@ -1,0 +1,8 @@
+## Interface: 60000
+## Title: Riphie_Minimap
+## Author: Riphie
+## Notes: Simple and minimalist Minimap
+
+config.lua
+
+core\core.lua
