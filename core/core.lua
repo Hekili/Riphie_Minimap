@@ -81,7 +81,11 @@ MiniMapTrackingButton:SetBackdropBorderColor(0, 0, 0)
 MiniMapTracking:SetAlpha(0)
 
 -- Coords
-local mapCoord = Minimap:CreateFontString("MinimapCoords", "OVERLAY")
+local CoordFrame = CreateFrame("Button", "MinimapCoords", Minimap)
+CoordFrame:SetPoint("TOP", Minimap, "TOP", 0, -5)
+CoordFrame:RegisterForClicks("AnyDown")
+
+local mapCoord = CoordFrame:CreateFontString("MinimapCoords", "OVERLAY")
 mapCoord:SetFont("Interface\\AddOns\\Riphie_Minimap\\media\\font.ttf", 11, "THINOUTLINE")
 mapCoord:SetJustifyH("RIGHT")
 mapCoord:SetTextColor(1, 1, 1)
@@ -97,10 +101,26 @@ Minimap:SetScript("OnUpdate", function(self, elapsed)
 
   if CoordTimer < 0 then
     local x, y = GetPlayerMapPosition("player")
-    mapCoord:SetText(string.format("%.1f, %.1f", x * 100, y * 100))
+    mapCoord:SetText( ( x ~= 0 and y ~= 0 ) and string.format("%.1f, %.1f", x * 100, y * 100) or ' ' )
+	CoordFrame:SetSize( mapCoord:GetSize() )
     CoordTimer = 0.2
   end
 end)
+
+local CoordStick = false
+CoordFrame:SetScript("OnMouseDown", function(self, ...)
+	if not mapCoord:IsMouseOver() then return end
+	
+	CoordStick = not CoordStick
+	
+	if CoordStick then
+		mapCoord:SetTextColor( 1, 0.82, 0 )
+	else
+		mapCoord:SetTextColor( 1, 1, 1 )
+	end
+	
+	return 
+end )
 
 local OnLeave = function()
   if not Minimap:IsMouseOver()
@@ -109,7 +129,7 @@ local OnLeave = function()
       and not QueueStatusMinimapButton:IsMouseOver()
       and not MiniMapMailFrame:IsMouseOver() then
     MiniMapTracking:SetAlpha(0)
-    mapCoord:SetAlpha(0)
+    if not CoordStick then mapCoord:SetAlpha(0) end
   end
 end
 
