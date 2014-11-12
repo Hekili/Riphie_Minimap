@@ -80,6 +80,28 @@ MiniMapTrackingButtonBorder:Hide()
 MiniMapTrackingButton:SetBackdropBorderColor(0, 0, 0)
 MiniMapTracking:SetAlpha(0)
 
+-- Coords
+local mapCoord = Minimap:CreateFontString( "MinimapCoords", "OVERLAY" )
+mapCoord:SetFont("Interface\\AddOns\\Riphie_Minimap\\media\\font.ttf", 11, "THINOUTLINE")
+mapCoord:SetJustifyH("RIGHT")
+mapCoord:SetTextColor(1, 1, 1)
+mapCoord:SetShadowOffset(0, 0)
+mapCoord:SetShadowColor(0, 0, 0, 0)
+mapCoord:SetAlpha(0)
+mapCoord:Show()
+mapCoord:SetPoint( "TOP", Minimap, "TOP", 0, -5 )
+
+local CoordTimer = 0
+Minimap:SetScript("OnUpdate", function(self, elapsed)
+	CoordTimer = CoordTimer - elapsed
+	
+	if CoordTimer < 0 then
+		local x, y = GetPlayerMapPosition("player")
+		mapCoord:SetText( string.format("%.1f, %.1f", x * 100, y * 100) )
+		CoordTimer = 0.2
+	end		
+end )
+
 local OnLeave = function()
   if not Minimap:IsMouseOver()
       and not TimeManagerClockButton:IsMouseOver()
@@ -87,12 +109,15 @@ local OnLeave = function()
       and not QueueStatusMinimapButton:IsMouseOver()
       and not MiniMapMailFrame:IsMouseOver() then
     MiniMapTracking:SetAlpha(0)
+	mapCoord:SetAlpha(0)
   end
 end
 
 Minimap:HookScript("OnEnter", function()
   MiniMapTracking:SetAlpha(1)
+  mapCoord:SetAlpha(1)
 end)
+
 Minimap:HookScript("OnLeave", OnLeave)
 MiniMapTrackingButton:HookScript("OnLeave", OnLeave)
 QueueStatusMinimapButton:HookScript("OnLeave", OnLeave)
