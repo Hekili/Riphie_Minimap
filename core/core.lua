@@ -119,6 +119,7 @@ Minimap:HookScript("OnEnter", function()
 end)
 
 Minimap:HookScript("OnLeave", OnLeave)
+TimeManagerClockButton:HookScript("OnLeave", OnLeave)
 MiniMapTrackingButton:HookScript("OnLeave", OnLeave)
 QueueStatusMinimapButton:HookScript("OnLeave", OnLeave)
 MiniMapMailFrame:HookScript("OnLeave", OnLeave)
